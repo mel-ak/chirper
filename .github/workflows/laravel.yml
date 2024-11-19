@@ -31,8 +31,8 @@ jobs:
         composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --ignore-platform-reqs
         npm install
     # Build frontend assets (optional)
-    - name: Build Assets
-      run: npm run dev # Use `npm run production` for production builds
+    # - name: Build Assets
+      # run: npm run dev # Use `npm run production` for production builds
     # Generate app key
     - name: Generate Key
       run: php artisan key:generate
