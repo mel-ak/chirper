@@ -12,23 +12,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Setup PHP
     - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
       with:
         php-version: '8.2'
+    # Checkout the repository
     - uses: actions/checkout@v4
+    # Setup Node.js
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Specify the Node.js version you need
+    # Copy .env
     - name: Copy .env
       run: php -r "file_exists('.env') || copy('.env.example', '.env');"
-    - name: Install Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --ignore-platform-reqs
-    - name: Generate key
+    # Install dependencies
+    - name: Install PHP and Node.js Dependencies
+      run: |
+        composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --ignore-platform-reqs
+        npm install
+    # Build frontend assets (optional)
+    - name: Build Assets
+      run: npm run dev # Use `npm run production` for production builds
+    # Generate app key
+    - name: Generate Key
       run: php artisan key:generate
+    # Set directory permissions
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
+    # Create SQLite database
     - name: Create Database
       run: |
         mkdir -p database
         touch database/database.sqlite
-    - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
+    # Run PHPUnit/Pest tests
+    - name: Execute Tests
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
